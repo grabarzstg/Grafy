@@ -6,7 +6,6 @@ City = Struct.new(:x, :y)
 POINTS = Array.new
 HOSPITALS = Array.new
 
-
 data = File.readlines("data").each do |line|
 	if line.start_with?('#')
 		next
@@ -27,32 +26,24 @@ def calculateDistance(city1, city2)
   return Math.sqrt((a*a)+(b*b))
 end
 
-def FurthestFirst(k)
-  (0..(POINTS.length-1)).each do |i|
-    dist = calculateDistance(HOSPITALS[k], POINTS[i])
-    $closestHospital[i] = dist if dist < $closestHospital[i]
+# Algorytm - strona 38 
+# http://zylinski.strony.ug.edu.pl/GGA/GGAW9.pdf
+def FurthestFirst
+  HOSPITALS[0] = POINTS[0] # pierwszy szpital
+  $closestHospital[0] = 0  # w pierwszym miescie jest szpital 
+  (0..(K-2)).each do |k|   # -2 z powodu indeksowania i dodania wczesniej szpitala
+    STDOUT.flush
+    (0..(N-1)).each do |i|
+      dist = calculateDistance(HOSPITALS[k], POINTS[i])
+      $closestHospital[i] = dist if dist < $closestHospital[i]
+    end
+    HOSPITALS << POINTS[$closestHospital.rindex($closestHospital.max)]
   end
-  HOSPITALS << POINTS[$closestHospital.rindex($closestHospital.max)]
 end
 
 
 # MAIN
-HOSPITALS[0] = POINTS[0] # pierwszy szpital
-$closestHospital[0] = 0  # w pierwszym miescie jest szpital 
-FurthestFirst(0)
-#puts $closestHospital.to_s
-#puts POINTS.to_s
-
-(1..(K-1)).each do |k|
-  puts HOSPITALS.to_s
-  STDOUT.flush
-  FurthestFirst(k)
-
+FurthestFirst()
+(1..K).each do |i|
+  puts "Szpital #{i} : (#{HOSPITALS[i-1].x}, #{HOSPITALS[i-1].y})"
 end
-
-
-
-# puts K
-#puts POINTS.to_s
-puts HOSPITALS.to_s
-#puts calculateDistance(3,4)
